@@ -29,7 +29,8 @@ import {
   ShieldCheck,
   Package,
   Calendar,
-  Globe
+  Globe,
+  ChevronLeft
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -76,6 +77,14 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('Overview');
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  
+  // LOGIN FORM STATES
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(false);
   
   // DATA STATES
   const [stats, setStats] = useState<AdminStats>({ totalUsers: 0, activeSubscribers: 0, totalPool: 0, charityShares: 0 });
@@ -96,8 +105,49 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setMounted(true);
-    fetchAllData();
+    checkAdminAuth();
   }, []);
+
+  const checkAdminAuth = async () => {
+    setCheckingAuth(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+      if (profile?.is_admin) {
+        setIsAuthorized(true);
+        fetchAllData();
+      } else {
+        setIsAuthorized(false);
+      }
+    }
+    setCheckingAuth(false);
+  };
+
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthLoading(true);
+    setAuthError(null);
+
+    const { error, data } = await supabase.auth.signInWithPassword({
+      email: adminEmail,
+      password: adminPassword,
+    });
+
+    if (error) {
+      setAuthError(error.message);
+    } else {
+      const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', data.user.id).single();
+      if (profile?.is_admin) {
+        setIsAuthorized(true);
+        fetchAllData();
+      } else {
+        await supabase.auth.signOut();
+        setAuthError('Unauthorized: This identity does not hold Admin credentials.');
+      }
+    }
+    setAuthLoading(false);
+  };
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -227,6 +277,83 @@ export default function AdminDashboard() {
     await supabase.from('winners').update({ payout_status: status }).eq('id', winnerId);
     fetchAllData();
   };
+
+  if (!mounted || checkingAuth) {
+    return <div className="min-h-screen flex align-center justify-center bg-slate-900"><Loader2 className="animate-spin text-emerald-500" size={48} /></div>;
+  }
+
+  if (!isAuthorized) {
+    return (
+      <main className="min-h-screen flex align-center justify-center p-6 bg-slate-950 relative overflow-hidden">
+        {/* Matrix/Cyber Background Blobs */}
+        <motion.div 
+          animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.1, 1] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          style={{ position: 'absolute', top: '-10%', left: '-5%', width: '50%', height: '50%', background: 'radial-gradient(circle, #10b981 0%, transparent 70%)', filter: 'blur(120px)', zIndex: 0 }}
+        />
+        
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-lg p-12 relative z-10"
+          style={{ background: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(32px)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 64px -16px rgba(0,0,0,0.5)', borderRadius: '2rem' }}
+        >
+          <div className="text-center mb-12">
+             <div className="bg-emerald-500/10 w-20 h-20 rounded-3xl mx-auto flex align-center justify-center mb-8 border border-emerald-500/20">
+                <ShieldCheck color="#10b981" size={40} />
+             </div>
+             <h1 className="text-3xl mb-3 text-white font-black tracking-tighter uppercase tabular-nums">DH Command Center</h1>
+             <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">Encryption Grade Access Only</p>
+          </div>
+
+          <form onSubmit={handleAdminLogin} className="flex flex-column gap-6">
+            <div className="flex flex-column gap-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Admin Credential</label>
+              <input 
+                type="email" 
+                required 
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@digitalheroes.co"
+                className="bg-slate-800/50 border border-slate-700 p-5 rounded-xl text-white outline-none focus:border-emerald-500 transition-all font-bold"
+              />
+            </div>
+            <div className="flex flex-column gap-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">System Cipher</label>
+              <input 
+                type="password" 
+                required 
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="••••••••"
+                className="bg-slate-800/50 border border-slate-700 p-5 rounded-xl text-white outline-none focus:border-emerald-500 transition-all font-bold"
+              />
+            </div>
+
+            {authError && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-red-500/10 text-red-500 text-xs rounded-xl font-bold border border-red-500/20">
+                {authError}
+              </motion.div>
+            )}
+
+            <button 
+              type="submit" 
+              disabled={authLoading}
+              className="w-full py-5 bg-emerald-500 text-slate-950 rounded-xl font-black uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 flex align-center justify-center gap-3 mt-4"
+            >
+              {authLoading ? <Loader2 className="animate-spin" /> : <>Initiate Console <ArrowRight size={20} /></>}
+            </button>
+          </form>
+
+          <div className="mt-12 pt-10 border-t border-slate-800 text-center">
+             <Link href="/" className="text-slate-500 text-xs font-bold hover:text-white transition-all uppercase tracking-widest flex align-center justify-center gap-2">
+                <ChevronLeft size={16} /> Return to Public Portal
+             </Link>
+          </div>
+        </motion.div>
+      </main>
+    );
+  }
 
   return (
     <div className="flex" style={{ minHeight: '100vh', background: 'var(--bg-secondary)' }}>
