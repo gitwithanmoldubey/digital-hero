@@ -28,7 +28,8 @@ import {
   ExternalLink,
   ShieldCheck,
   Package,
-  Calendar
+  Calendar,
+  Globe
 } from 'lucide-react';
 import Link from 'next/link';
 
