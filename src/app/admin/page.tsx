@@ -554,7 +554,7 @@ export default function AdminDashboard() {
                            </div>
                            <h4 style={{ fontWeight: 800, fontSize: '1.25rem', marginBottom: '0.5rem' }}>{c.name}</h4>
                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '2rem', minHeight: '60px' }}>{c.description?.slice(0, 100)}...</p>
-                           <a href={c.website_url} target="_blank" style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-primary)', display: 'flex', alignCenter: 'center', gap: '0.4rem' }}>
+                           <a href={c.website_url} target="_blank" style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                               Visit Portal <ExternalLink size={12} />
                            </a>
                         </div>
@@ -695,7 +695,7 @@ export default function AdminDashboard() {
 
       {/* --- ADD CHARITY MODAL --- */}
       {showAddCharity && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(12px)', zize: 100, display: 'flex', alignCenter: 'center', justifyCenter: 'center', padding: '2rem', zIndex: 100 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(12px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
            <motion.div 
              initial={{ scale: 0.9, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
@@ -732,7 +732,7 @@ export default function AdminDashboard() {
 
       {/* --- EDIT USER MODAL --- */}
       {selectedUser && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(12px)', display: 'flex', alignCenter: 'center', justifyCenter: 'center', padding: '2rem', zIndex: 100 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', zIndex: 100 }}>
            <motion.div 
              initial={{ scale: 0.9, opacity: 0 }}
              animate={{ scale: 1, opacity: 1 }}
