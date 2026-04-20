@@ -279,75 +279,83 @@ export default function AdminDashboard() {
   };
 
   if (!mounted || checkingAuth) {
-    return <div className="min-h-screen flex align-center justify-center bg-slate-900"><Loader2 className="animate-spin text-emerald-500" size={48} /></div>;
+    return <div className="min-h-screen flex align-center justify-center bg-white"><Loader2 className="animate-spin text-emerald-500" size={48} /></div>;
   }
 
   if (!isAuthorized) {
     return (
-      <main className="min-h-screen flex align-center justify-center p-6 bg-slate-950 relative overflow-hidden">
-        {/* Matrix/Cyber Background Blobs */}
+      <main className="min-h-screen flex align-center justify-center p-6 bg-slate-50 relative overflow-hidden">
+        {/* Subtle Background Accents */}
         <motion.div 
-          animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.1, 1] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          style={{ position: 'absolute', top: '-10%', left: '-5%', width: '50%', height: '50%', background: 'radial-gradient(circle, #10b981 0%, transparent 70%)', filter: 'blur(120px)', zIndex: 0 }}
+          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.05, 1] }}
+          transition={{ duration: 15, repeat: Infinity }}
+          style={{ position: 'absolute', top: '-10%', left: '-5%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)', filter: 'blur(100px)', zIndex: 0 }}
         />
         
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-lg p-12 relative z-10"
-          style={{ background: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(32px)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 64px -16px rgba(0,0,0,0.5)', borderRadius: '2rem' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-lg p-16 relative z-10"
+          style={{ background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 40px 80px -20px rgba(15,23,42,0.1)', borderRadius: '2.5rem' }}
         >
           <div className="text-center mb-12">
-             <div className="bg-emerald-500/10 w-20 h-20 rounded-3xl mx-auto flex align-center justify-center mb-8 border border-emerald-500/20">
-                <ShieldCheck color="#10b981" size={40} />
+             <div className="bg-emerald-500 w-20 h-20 rounded-3xl mx-auto flex align-center justify-center mb-10 shadow-xl shadow-emerald-500/20">
+                <ShieldCheck color="#fff" size={40} />
              </div>
-             <h1 className="text-3xl mb-3 text-white font-black tracking-tighter uppercase tabular-nums">DH Command Center</h1>
-             <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">Encryption Grade Access Only</p>
+             <h1 className="text-4xl mb-4 text-slate-900 font-black tracking-tight uppercase">Admin Console</h1>
+             <p className="text-slate-400 text-xs font-bold tracking-[0.2em] uppercase">Authorized Credentials Required</p>
           </div>
 
-          <form onSubmit={handleAdminLogin} className="flex flex-column gap-6">
-            <div className="flex flex-column gap-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Admin Credential</label>
-              <input 
-                type="email" 
-                required 
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="admin@digitalheroes.co"
-                className="bg-slate-800/50 border border-slate-700 p-5 rounded-xl text-white outline-none focus:border-emerald-500 transition-all font-bold"
-              />
+          <form onSubmit={handleAdminLogin} className="flex flex-column gap-10">
+            <div className="flex flex-column gap-3">
+              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Command Identity</label>
+              <div className="flex align-center px-6 py-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+                 <Users size={20} className="text-slate-300 mr-3" />
+                 <input 
+                   type="email" 
+                   required 
+                   value={adminEmail}
+                   onChange={(e) => setAdminEmail(e.target.value)}
+                   placeholder="admin@digitalheroes.co"
+                   className="bg-transparent border-none text-slate-900 w-full outline-none font-bold text-lg"
+                 />
+              </div>
             </div>
-            <div className="flex flex-column gap-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">System Cipher</label>
-              <input 
-                type="password" 
-                required 
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="••••••••"
-                className="bg-slate-800/50 border border-slate-700 p-5 rounded-xl text-white outline-none focus:border-emerald-500 transition-all font-bold"
-              />
+            
+            <div className="flex flex-column gap-3">
+              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Cipher</label>
+              <div className="flex align-center px-6 py-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+                 <Lock size={20} className="text-slate-300 mr-3" />
+                 <input 
+                   type="password" 
+                   required 
+                   value={adminPassword}
+                   onChange={(e) => setAdminPassword(e.target.value)}
+                   placeholder="••••••••"
+                   className="bg-transparent border-none text-slate-900 w-full outline-none font-bold text-lg"
+                 />
+              </div>
             </div>
 
             {authError && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-red-500/10 text-red-500 text-xs rounded-xl font-bold border border-red-500/20">
-                {authError}
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 bg-red-50 text-red-600 text-sm rounded-2xl font-bold border border-red-100 flex align-center gap-3">
+                <AlertCircle size={20} /> {authError}
               </motion.div>
             )}
 
             <button 
               type="submit" 
               disabled={authLoading}
-              className="w-full py-5 bg-emerald-500 text-slate-950 rounded-xl font-black uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 flex align-center justify-center gap-3 mt-4"
+              className="w-full py-6 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-2xl flex align-center justify-center gap-4 mt-4"
+              style={{ fontSize: '1rem' }}
             >
-              {authLoading ? <Loader2 className="animate-spin" /> : <>Initiate Console <ArrowRight size={20} /></>}
+              {authLoading ? <Loader2 className="animate-spin" size={24} /> : <>Verify Identity <ArrowRight size={24} /></>}
             </button>
           </form>
 
-          <div className="mt-12 pt-10 border-t border-slate-800 text-center">
-             <Link href="/" className="text-slate-500 text-xs font-bold hover:text-white transition-all uppercase tracking-widest flex align-center justify-center gap-2">
-                <ChevronLeft size={16} /> Return to Public Portal
+          <div className="mt-16 pt-10 border-t border-slate-100 text-center">
+             <Link href="/" className="text-slate-400 text-sm font-bold hover:text-slate-900 transition-all flex align-center justify-center gap-2">
+                <ChevronLeft size={18} /> Return to Portal
              </Link>
           </div>
         </motion.div>
