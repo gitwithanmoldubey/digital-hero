@@ -30,7 +30,8 @@ import {
   Package,
   Calendar,
   Globe,
-  ChevronLeft
+  ChevronLeft,
+  Lock
 } from 'lucide-react';
 import Link from 'next/link';
 
